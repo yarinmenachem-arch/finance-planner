@@ -1,0 +1,977 @@
+﻿// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCqy4UaiPqlVcmJ4ghE47FIhjOoikbjEWI",
+  authDomain: "finance-web-89bf4.firebaseapp.com",
+  projectId: "finance-web-89bf4",
+  storageBucket: "finance-web-89bf4.firebasestorage.app",
+  messagingSenderId: "60362529098",
+  appId: "1:60362529098:web:898fcbeaf8501cbf2e49b3"
+};
+
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+
+
+
+
+
+
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCqy4UaiPqlVcmJ4ghE47FIhjOoikbjEWI",
+  authDomain: "finance-web-89bf4.firebaseapp.com",
+  projectId: "finance-web-89bf4",
+  storageBucket: "finance-web-89bf4.firebasestorage.app",
+  messagingSenderId: "60362529098",
+  appId: "1:60362529098:web:898fcbeaf8501cbf2e49b3"
+};
+
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Financial Goal Planner — Full React App (Vite)
+
+
+**מה בקנבּס הזה:** קוד מקור מלא לשם יצירת מוצר Web חזק פשוט לפריסה. הקבצים למטה ניתן להעתיק ישירות לפרויקט Vite + Tailwind או להדביק במערכת הקבצים שלך.
+
+
+---
+
+
+## מבנה הפרויקט (הצעה)
+```
+financial-goal-planner/
+├─ package.json
+├─ vite.config.js
+├─ tailwind.config.cjs
+├─ postcss.config.cjs
+├─ README.md
+├─ public/
+│  └─ index.html
+└─ src/
+   ├─ main.jsx
+   ├─ index.css
+   ├─ App.jsx
+   ├─ pages/
+   │  ├─ Planner.jsx
+   │  └─ GoalsList.jsx
+   ├─ components/
+   │  ├─ GoalForm.jsx
+   │  ├─ SnapshotCard.jsx
+   │  └─ ChartBlock.jsx
+   └─ utils/
+      └─ finance.js
+```
+
+
+---
+
+
+## 1) package.json
+```json
+{
+  "name": "financial-goal-planner",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.14.1",
+    "recharts": "^2.6.2",
+    "file-saver": "^2.0.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.0",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.23",
+    "tailwindcss": "^3.4.8",
+    "vite": "^5.0.0"
+  }
+}
+```
+
+
+---
+
+
+## 2) vite.config.js
+```js
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+
+export default defineConfig({
+  plugins: [react()],
+})
+```
+
+
+---
+
+
+## 3) tailwind.config.cjs & postcss
+```js
+// tailwind.config.cjs
+module.exports = {
+  content: ['./index.html', './src/**/*.{js,jsx}'],
+  theme: { extend: {} },
+  plugins: [],
+}
+```
+
+
+```js
+// postcss.config.cjs
+module.exports = { plugins: { tailwindcss: {}, autoprefixer: {} } }
+```
+
+
+---
+
+
+## 4) public/index.html
+```html
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Financial Goal Planner</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+```
+
+
+---
+
+
+## 5) src/index.css
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+html, body, #root { height: 100%; }
+body { font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
+```
+
+
+---
+
+
+## 6) src/main.jsx
+```jsx
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
+import App from './App'
+import './index.css'
+
+
+createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>
+)
+```
+
+
+---
+
+
+## 7) src/utils/finance.js
+```js
+export function monthsDiff(from, to) {
+  const a = new Date(from.getFullYear(), from.getMonth(), 1);
+  const b = new Date(to.getFullYear(), to.getMonth(), 1);
+  const years = b.getFullYear() - a.getFullYear();
+  const months = b.getMonth() - a.getMonth();
+  return years * 12 + months;
+}
+
+
+export function currencyFormat(n) {
+  try {
+    return new Intl.NumberFormat('he-IL', { style: 'currency', currency: 'ILS', maximumFractionDigits: 0 }).format(n);
+  } catch { return `₪${Math.round(n)}` }
+}
+```
+
+
+---
+
+
+## 8) src/App.jsx (Routing + layout)
+```jsx
+import React from 'react'
+import { Routes, Route, Link } from 'react-router-dom'
+import Planner from './pages/Planner'
+import GoalsList from './pages/GoalsList'
+
+
+export default function App(){
+  return (
+    <div dir="rtl" className="min-h-screen bg-gray-50">
+      <nav className="bg-white shadow p-4">
+        <div className="max-w-6xl mx-auto flex justify-between">
+          <div className="font-bold">מתכנן מטרות פיננסיות</div>
+          <div className="flex gap-4">
+            <Link to="/" className="text-sm">דף מטרה</Link>
+            <Link to="/goals" className="text-sm">כל המטרות</Link>
+          </div>
+        </div>
+      </nav>
+      <main className="max-w-6xl mx-auto p-6">
+        <Routes>
+          <Route path="/" element={<Planner/>} />
+          <Route path="/goals" element={<GoalsList/>} />
+        </Routes>
+      </main>
+    </div>
+  )
+}
+```
+
+
+---
+
+
+## 9) src/pages/GoalsList.jsx (רשימת מטרות וריבוי מטרות)
+```jsx
+import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+
+
+const STORAGE = 'fgp-goals-v1'
+
+
+export default function GoalsList(){
+  const [goals, setGoals] = useState([])
+
+
+  useEffect(()=>{
+    const raw = localStorage.getItem(STORAGE)
+    if(raw) setGoals(JSON.parse(raw))
+  },[])
+
+
+  return (
+    <div>
+      <h1 className="text-2xl font-semibold mb-4">מטרות שמורות</h1>
+      <div className="grid gap-3">
+        {goals.length === 0 && <div className="text-gray-600">לא נמצאו מטרות. צור מטרה בדף הראשי.</div>}
+        {goals.map((g,i)=> (
+          <div key={i} className="border rounded-lg p-3 bg-white">
+            <div className="flex justify-between items-center">
+              <div>
+                <div className="font-medium">{g.goalName || 'מטרה ללא שם'}</div>
+                <div className="text-sm text-gray-500">יעד: ₪{g.targetAmount.toLocaleString()}</div>
+              </div>
+              <div className="text-sm">התקדמות: {Math.round((g.currentSaved/g.targetAmount)*100 || 0)}%</div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-6">
+        <Link to="/" className="text-blue-600">חזור לדף יצירת מטרה</Link>
+      </div>
+    </div>
+  )
+}
+```
+
+
+---
+
+
+## 10) src/pages/Planner.jsx
+(כאן נכנס רוב הקוד שיצרנו קודם — דף יצירת מטרה, מצב נוכחי, תחזית, המלצות, הורדת JSON ועוד)
+```jsx
+import React, { useEffect, useMemo, useState } from 'react'
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell } from 'recharts'
+import { monthsDiff, currencyFormat } from '../utils/finance'
+
+
+const STORAGE = 'fgp-goals-v1'
+
+
+export default function Planner(){
+  const [goalName, setGoalName] = useState('')
+  const [targetAmount, setTargetAmount] = useState(500000)
+  const [currentSaved, setCurrentSaved] = useState(0)
+  const [targetDate, setTargetDate] = useState(()=>{ const d=new Date(); d.setMonth(d.getMonth()+36); return d.toISOString().slice(0,10) })
+  const [monthlyIncome, setMonthlyIncome] = useState(15000)
+  const [monthlyExpenses, setMonthlyExpenses] = useState(10000)
+
+
+  useEffect(()=>{
+    const raw = localStorage.getItem(STORAGE)
+    if(raw) {
+      try{
+        const parsed = JSON.parse(raw)
+        if(parsed.goalName) setGoalName(parsed.goalName)
+        if(parsed.targetAmount) setTargetAmount(parsed.targetAmount)
+        if(parsed.currentSaved) setCurrentSaved(parsed.currentSaved)
+        if(parsed.targetDate) setTargetDate(parsed.targetDate)
+        if(parsed.monthlyIncome) setMonthlyIncome(parsed.monthlyIncome)
+        if(parsed.monthlyExpenses) setMonthlyExpenses(parsed.monthlyExpenses)
+      }catch{}
+    }
+  }, [])
+
+
+  useEffect(()=>{
+    const payload = { goalName, targetAmount:Number(targetAmount), currentSaved:Number(currentSaved), targetDate, monthlyIncome:Number(monthlyIncome), monthlyExpenses:Number(monthlyExpenses) }
+    localStorage.setItem(STORAGE, JSON.stringify(payload))
+  }, [goalName,targetAmount,currentSaved,targetDate,monthlyIncome,monthlyExpenses])
+
+
+  const today = new Date()
+  const deadline = new Date(targetDate)
+  const monthsRemaining = Math.max(1, monthsDiff(today, deadline))
+  const currentMonthlySaving = Number(monthlyIncome) - Number(monthlyExpenses)
+  const amountRemaining = Math.max(0, Number(targetAmount) - Number(currentSaved))
+  const requiredMonthlySaving = amountRemaining / monthsRemaining
+  const onTrack = currentMonthlySaving >= requiredMonthlySaving && amountRemaining > 0
+  const etaMonths = currentMonthlySaving <= 0 ? Infinity : Math.ceil(amountRemaining / currentMonthlySaving)
+
+
+  // projection
+  const projectionData = useMemo(()=>{
+    const points = Math.min(Math.max(monthsRemaining, 12), 120)
+    const data = []
+    let cur1 = Number(currentSaved)
+    let cur2 = Number(currentSaved)
+    for(let i=0;i<=points;i++){
+      const date = new Date(today.getFullYear(), today.getMonth()+i, 1)
+      const label = `${date.getMonth()+1}/${String(date.getFullYear()).slice(2)}`
+      if(i>0){ cur1 += currentMonthlySaving; cur2 += requiredMonthlySaving }
+      data.push({ name: label, current: Math.max(0, cur1), required: Math.max(0, cur2) })
+    }
+    return data
+  }, [monthsRemaining, currentSaved, currentMonthlySaving, requiredMonthlySaving, today])
+
+
+  function downloadPlan(){
+    const payload = { goalName, targetAmount:Number(targetAmount), currentSaved:Number(currentSaved), targetDate, monthlyIncome:Number(monthlyIncome), monthlyExpenses:Number(monthlyExpenses), currentMonthlySaving, requiredMonthlySaving, monthsRemaining, etaMonths, createdAt: new Date().toISOString() }
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a'); a.href=url; a.download=`plan-${goalName||'goal'}.json`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url)
+  }
+
+
+  function saveAsNewGoal(){
+    const raw = localStorage.getItem(STORAGE)
+    let list = raw ? JSON.parse(raw) : []
+    // store as array of goals
+    if(!Array.isArray(list)) list = [list]
+    list.unshift({ id: Date.now(), goalName, targetAmount: Number(targetAmount), currentSaved: Number(currentSaved), targetDate, monthlyIncome:Number(monthlyIncome), monthlyExpenses:Number(monthlyExpenses) })
+    localStorage.setItem(STORAGE, JSON.stringify(list))
+    alert('המטרה נשמרה ברשימה המקומית.')
+  }
+
+
+  const pieData = [ { name: 'הכנסה', value: Math.max(0, Number(monthlyIncome)) }, { name: 'הוצאות', value: Math.max(0, Number(monthlyExpenses)) }, { name: 'חיסכון', value: Math.max(0, currentMonthlySaving) } ]
+
+
+  return (
+    <div className="space-y-6">
+      <section className="bg-white p-6 rounded-lg shadow">
+        <h1 className="text-2xl font-bold mb-2">הגדר מטרה פיננסית</h1>
+        <div className="grid md:grid-cols-4 gap-3">
+          <input className="p-2 border rounded" placeholder="שם המטרה" value={goalName} onChange={e=>setGoalName(e.target.value)} />
+          <input className="p-2 border rounded" type="number" value={targetAmount} onChange={e=>setTargetAmount(e.target.value)} />
+          <input className="p-2 border rounded" type="number" value={currentSaved} onChange={e=>setCurrentSaved(e.target.value)} />
+          <input className="p-2 border rounded" type="date" value={targetDate} onChange={e=>setTargetDate(e.target.value)} />
+        </div>
+        <div className="mt-4 flex gap-3">
+          <button onClick={downloadPlan} className="px-4 py-2 bg-blue-600 text-white rounded">הורד JSON</button>
+          <button onClick={saveAsNewGoal} className="px-4 py-2 bg-green-600 text-white rounded">שמור מטרה</button>
+        </div>
+      </section>
+
+
+      <section className="bg-white p-6 rounded-lg shadow">
+        <h2 className="text-xl font-semibold mb-2">מצב חודשי נוכחי</h2>
+        <div className="grid md:grid-cols-3 gap-3">
+          <input className="p-2 border rounded" type="number" value={monthlyIncome} onChange={e=>setMonthlyIncome(e.target.value)} />
+          <input className="p-2 border rounded" type="number" value={monthlyExpenses} onChange={e=>setMonthlyExpenses(e.target.value)} />
+          <div className="p-3 border rounded">חיסכון חודשי: <strong>{currencyFormat(currentMonthlySaving)}</strong></div>
+        </div>
+
+
+        <div className="mt-4 grid md:grid-cols-3 gap-3">
+          <div className="p-3 border rounded">חודשים שנותרו: <strong>{monthsRemaining}</strong></div>
+          <div className="p-3 border rounded">חיסכון חודשי נדרש: <strong>{currencyFormat(requiredMonthlySaving)}</strong></div>
+          <div className="p-3 border rounded">סטטוס: <strong>{onTrack ? 'במסלול' : 'לא במסלול'}</strong></div>
+        </div>
+      </section>
+
+
+      <section className="bg-white p-6 rounded-lg shadow grid md:grid-cols-2 gap-4">
+        <div>
+          <h3 className="font-medium mb-2">תחזית חיסכון</h3>
+          <div style={{height:360}}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={projectionData}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip formatter={(v)=>currencyFormat(v)} />
+                <Legend />
+                <Line type="monotone" dataKey="current" stroke="#2b6cb0" dot={false} />
+                <Line type="monotone" dataKey="required" stroke="#dd6b20" strokeDasharray="4 4" dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+
+        <div>
+          <h3 className="font-medium mb-2">חלוקה חודשית</h3>
+          <div style={{height:360}}>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={pieData} dataKey="value" nameKey="name" outerRadius={100} label>
+                  {pieData.map((_,i)=>(<Cell key={i}/>))}
+                </Pie>
+                <Tooltip formatter={(v)=>currencyFormat(v)} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </section>
+
+
+      <section className="bg-white p-6 rounded-lg shadow">
+        <h3 className="font-medium mb-2">המלצות</h3>
+        <ul className="list-disc mr-6">
+          <li>חיסכון חודשי נדרש: {currencyFormat(requiredMonthlySaving)} למשך {monthsRemaining} חודשים.</li>
+          {currentMonthlySaving <= 0 && <li>כרגע אין חיסכון חודשי — כדאי לצמצם הוצאות או להעלות הכנסות / לדחות יעד.</li>}
+          {currentMonthlySaving > 0 && currentMonthlySaving < requiredMonthlySaving && <li>בקצב הנוכחי תגיע ליעד בעוד כ-{isFinite(etaMonths)?etaMonths:'∞'} חודשים — מאוחר מהיעד. שקול להגדיל חיסכון ב-{currencyFormat(requiredMonthlySaving-currentMonthlySaving)} לחודש.</li>}
+          {currentMonthlySaving >= requiredMonthlySaving && <li>אתה במסלול — מומלץ לשמור כרית ביטחון של 3–6 חודשי הוצאות לפני השקעות מסוכנות.</li>}
+        </ul>
+      </section>
+    </div>
+  )
+}
+```
+
+
+# Financial Goal Planner — Full React App (Vite)
+
+
+**מה בקנבּס הזה:** קוד מקור מלא לשם יצירת מוצר Web חזק פשוט לפריסה. הקבצים למטה ניתן להעתיק ישירות לפרויקט Vite + Tailwind או להדביק במערכת הקבצים שלך.
+
+
+---
+
+
+## מבנה הפרויקט (הצעה)
+```
+financial-goal-planner/
+├─ package.json
+├─ vite.config.js
+├─ tailwind.config.cjs
+├─ postcss.config.cjs
+├─ README.md
+├─ public/
+│  └─ index.html
+└─ src/
+   ├─ main.jsx
+   ├─ index.css
+   ├─ App.jsx
+   ├─ pages/
+   │  ├─ Planner.jsx
+   │  └─ GoalsList.jsx
+   ├─ components/
+   │  ├─ GoalForm.jsx
+   │  ├─ SnapshotCard.jsx
+   │  └─ ChartBlock.jsx
+   └─ utils/
+      └─ finance.js
+```
+
+
+---
+
+
+## 1) package.json
+```json
+{
+  "name": "financial-goal-planner",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.14.1",
+    "recharts": "^2.6.2",
+    "file-saver": "^2.0.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.0",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.23",
+    "tailwindcss": "^3.4.8",
+    "vite": "^5.0.0"
+  }
+}
+```
+
+
+---
+
+
+## 2) vite.config.js
+```js
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+
+export default defineConfig({
+  plugins: [react()],
+})
+```
+
+
+---
+
+
+## 3) tailwind.config.cjs & postcss
+```js
+// tailwind.config.cjs
+module.exports = {
+  content: ['./index.html', './src/**/*.{js,jsx}'],
+  theme: { extend: {} },
+  plugins: [],
+}
+```
+
+
+```js
+// postcss.config.cjs
+module.exports = { plugins: { tailwindcss: {}, autoprefixer: {} } }
+```
+
+
+---
+
+
+## 4) public/index.html
+```html
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Financial Goal Planner</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+```
+
+
+---
+
+
+## 5) src/index.css
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+html, body, #root { height: 100%; }
+body { font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
+```
+
+
+---
+
+
+## 6) src/main.jsx
+```jsx
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
+import App from './App'
+import './index.css'
+
+
+createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>
+)
+```
+
+
+---
+
+
+## 7) src/utils/finance.js
+```js
+export function monthsDiff(from, to) {
+  const a = new Date(from.getFullYear(), from.getMonth(), 1);
+  const b = new Date(to.getFullYear(), to.getMonth(), 1);
+  const years = b.getFullYear() - a.getFullYear();
+  const months = b.getMonth() - a.getMonth();
+  return years * 12 + months;
+}
+
+
+export function currencyFormat(n) {
+  try {
+    return new Intl.NumberFormat('he-IL', { style: 'currency', currency: 'ILS', maximumFractionDigits: 0 }).format(n);
+  } catch { return `₪${Math.round(n)}` }
+}
+```
+
+
+---
+
+
+## 8) src/App.jsx (Routing + layout)
+```jsx
+import React from 'react'
+import { Routes, Route, Link } from 'react-router-dom'
+import Planner from './pages/Planner'
+import GoalsList from './pages/GoalsList'
+
+
+export default function App(){
+  return (
+    <div dir="rtl" className="min-h-screen bg-gray-50">
+      <nav className="bg-white shadow p-4">
+        <div className="max-w-6xl mx-auto flex justify-between">
+          <div className="font-bold">מתכנן מטרות פיננסיות</div>
+          <div className="flex gap-4">
+            <Link to="/" className="text-sm">דף מטרה</Link>
+            <Link to="/goals" className="text-sm">כל המטרות</Link>
+          </div>
+        </div>
+      </nav>
+      <main className="max-w-6xl mx-auto p-6">
+        <Routes>
+          <Route path="/" element={<Planner/>} />
+          <Route path="/goals" element={<GoalsList/>} />
+        </Routes>
+      </main>
+    </div>
+  )
+}
+```
+
+
+---
+
+
+## 9) src/pages/GoalsList.jsx (רשימת מטרות וריבוי מטרות)
+```jsx
+import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+
+
+const STORAGE = 'fgp-goals-v1'
+
+
+export default function GoalsList(){
+  const [goals, setGoals] = useState([])
+
+
+  useEffect(()=>{
+    const raw = localStorage.getItem(STORAGE)
+    if(raw) setGoals(JSON.parse(raw))
+  },[])
+
+
+  return (
+    <div>
+      <h1 className="text-2xl font-semibold mb-4">מטרות שמורות</h1>
+      <div className="grid gap-3">
+        {goals.length === 0 && <div className="text-gray-600">לא נמצאו מטרות. צור מטרה בדף הראשי.</div>}
+        {goals.map((g,i)=> (
+          <div key={i} className="border rounded-lg p-3 bg-white">
+            <div className="flex justify-between items-center">
+              <div>
+                <div className="font-medium">{g.goalName || 'מטרה ללא שם'}</div>
+                <div className="text-sm text-gray-500">יעד: ₪{g.targetAmount.toLocaleString()}</div>
+              </div>
+              <div className="text-sm">התקדמות: {Math.round((g.currentSaved/g.targetAmount)*100 || 0)}%</div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-6">
+        <Link to="/" className="text-blue-600">חזור לדף יצירת מטרה</Link>
+      </div>
+    </div>
+  )
+}
+```
+
+
+---
+
+
+## 10) src/pages/Planner.jsx
+(כאן נכנס רוב הקוד שיצרנו קודם — דף יצירת מטרה, מצב נוכחי, תחזית, המלצות, הורדת JSON ועוד)
+```jsx
+import React, { useEffect, useMemo, useState } from 'react'
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell } from 'recharts'
+import { monthsDiff, currencyFormat } from '../utils/finance'
+
+
+const STORAGE = 'fgp-goals-v1'
+
+
+export default function Planner(){
+  const [goalName, setGoalName] = useState('')
+  const [targetAmount, setTargetAmount] = useState(500000)
+  const [currentSaved, setCurrentSaved] = useState(0)
+  const [targetDate, setTargetDate] = useState(()=>{ const d=new Date(); d.setMonth(d.getMonth()+36); return d.toISOString().slice(0,10) })
+  const [monthlyIncome, setMonthlyIncome] = useState(15000)
+  const [monthlyExpenses, setMonthlyExpenses] = useState(10000)
+
+
+  useEffect(()=>{
+    const raw = localStorage.getItem(STORAGE)
+    if(raw) {
+      try{
+        const parsed = JSON.parse(raw)
+        if(parsed.goalName) setGoalName(parsed.goalName)
+        if(parsed.targetAmount) setTargetAmount(parsed.targetAmount)
+        if(parsed.currentSaved) setCurrentSaved(parsed.currentSaved)
+        if(parsed.targetDate) setTargetDate(parsed.targetDate)
+        if(parsed.monthlyIncome) setMonthlyIncome(parsed.monthlyIncome)
+        if(parsed.monthlyExpenses) setMonthlyExpenses(parsed.monthlyExpenses)
+      }catch{}
+    }
+  }, [])
+
+
+  useEffect(()=>{
+    const payload = { goalName, targetAmount:Number(targetAmount), currentSaved:Number(currentSaved), targetDate, monthlyIncome:Number(monthlyIncome), monthlyExpenses:Number(monthlyExpenses) }
+    localStorage.setItem(STORAGE, JSON.stringify(payload))
+  }, [goalName,targetAmount,currentSaved,targetDate,monthlyIncome,monthlyExpenses])
+
+
+  const today = new Date()
+  const deadline = new Date(targetDate)
+  const monthsRemaining = Math.max(1, monthsDiff(today, deadline))
+  const currentMonthlySaving = Number(monthlyIncome) - Number(monthlyExpenses)
+  const amountRemaining = Math.max(0, Number(targetAmount) - Number(currentSaved))
+  const requiredMonthlySaving = amountRemaining / monthsRemaining
+  const onTrack = currentMonthlySaving >= requiredMonthlySaving && amountRemaining > 0
+  const etaMonths = currentMonthlySaving <= 0 ? Infinity : Math.ceil(amountRemaining / currentMonthlySaving)
+
+
+  // projection
+  const projectionData = useMemo(()=>{
+    const points = Math.min(Math.max(monthsRemaining, 12), 120)
+    const data = []
+    let cur1 = Number(currentSaved)
+    let cur2 = Number(currentSaved)
+    for(let i=0;i<=points;i++){
+      const date = new Date(today.getFullYear(), today.getMonth()+i, 1)
+      const label = `${date.getMonth()+1}/${String(date.getFullYear()).slice(2)}`
+      if(i>0){ cur1 += currentMonthlySaving; cur2 += requiredMonthlySaving }
+      data.push({ name: label, current: Math.max(0, cur1), required: Math.max(0, cur2) })
+    }
+    return data
+  }, [monthsRemaining, currentSaved, currentMonthlySaving, requiredMonthlySaving, today])
+
+
+  function downloadPlan(){
+    const payload = { goalName, targetAmount:Number(targetAmount), currentSaved:Number(currentSaved), targetDate, monthlyIncome:Number(monthlyIncome), monthlyExpenses:Number(monthlyExpenses), currentMonthlySaving, requiredMonthlySaving, monthsRemaining, etaMonths, createdAt: new Date().toISOString() }
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a'); a.href=url; a.download=`plan-${goalName||'goal'}.json`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url)
+  }
+
+
+  function saveAsNewGoal(){
+    const raw = localStorage.getItem(STORAGE)
+    let list = raw ? JSON.parse(raw) : []
+    // store as array of goals
+    if(!Array.isArray(list)) list = [list]
+    list.unshift({ id: Date.now(), goalName, targetAmount: Number(targetAmount), currentSaved: Number(currentSaved), targetDate, monthlyIncome:Number(monthlyIncome), monthlyExpenses:Number(monthlyExpenses) })
+    localStorage.setItem(STORAGE, JSON.stringify(list))
+    alert('המטרה נשמרה ברשימה המקומית.')
+  }
+
+
+  const pieData = [ { name: 'הכנסה', value: Math.max(0, Number(monthlyIncome)) }, { name: 'הוצאות', value: Math.max(0, Number(monthlyExpenses)) }, { name: 'חיסכון', value: Math.max(0, currentMonthlySaving) } ]
+
+
+  return (
+    <div className="space-y-6">
+      <section className="bg-white p-6 rounded-lg shadow">
+        <h1 className="text-2xl font-bold mb-2">הגדר מטרה פיננסית</h1>
+        <div className="grid md:grid-cols-4 gap-3">
+          <input className="p-2 border rounded" placeholder="שם המטרה" value={goalName} onChange={e=>setGoalName(e.target.value)} />
+          <input className="p-2 border rounded" type="number" value={targetAmount} onChange={e=>setTargetAmount(e.target.value)} />
+          <input className="p-2 border rounded" type="number" value={currentSaved} onChange={e=>setCurrentSaved(e.target.value)} />
+          <input className="p-2 border rounded" type="date" value={targetDate} onChange={e=>setTargetDate(e.target.value)} />
+        </div>
+        <div className="mt-4 flex gap-3">
+          <button onClick={downloadPlan} className="px-4 py-2 bg-blue-600 text-white rounded">הורד JSON</button>
+          <button onClick={saveAsNewGoal} className="px-4 py-2 bg-green-600 text-white rounded">שמור מטרה</button>
+        </div>
+      </section>
+
+
+      <section className="bg-white p-6 rounded-lg shadow">
+        <h2 className="text-xl font-semibold mb-2">מצב חודשי נוכחי</h2>
+        <div className="grid md:grid-cols-3 gap-3">
+          <input className="p-2 border rounded" type="number" value={monthlyIncome} onChange={e=>setMonthlyIncome(e.target.value)} />
+          <input className="p-2 border rounded" type="number" value={monthlyExpenses} onChange={e=>setMonthlyExpenses(e.target.value)} />
+          <div className="p-3 border rounded">חיסכון חודשי: <strong>{currencyFormat(currentMonthlySaving)}</strong></div>
+        </div>
+
+
+        <div className="mt-4 grid md:grid-cols-3 gap-3">
+          <div className="p-3 border rounded">חודשים שנותרו: <strong>{monthsRemaining}</strong></div>
+          <div className="p-3 border rounded">חיסכון חודשי נדרש: <strong>{currencyFormat(requiredMonthlySaving)}</strong></div>
+          <div className="p-3 border rounded">סטטוס: <strong>{onTrack ? 'במסלול' : 'לא במסלול'}</strong></div>
+        </div>
+      </section>
+
+
+      <section className="bg-white p-6 rounded-lg shadow grid md:grid-cols-2 gap-4">
+        <div>
+          <h3 className="font-medium mb-2">תחזית חיסכון</h3>
+          <div style={{height:360}}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={projectionData}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip formatter={(v)=>currencyFormat(v)} />
+                <Legend />
+                <Line type="monotone" dataKey="current" stroke="#2b6cb0" dot={false} />
+                <Line type="monotone" dataKey="required" stroke="#dd6b20" strokeDasharray="4 4" dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+
+        <div>
+          <h3 className="font-medium mb-2">חלוקה חודשית</h3>
+          <div style={{height:360}}>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={pieData} dataKey="value" nameKey="name" outerRadius={100} label>
+                  {pieData.map((_,i)=>(<Cell key={i}/>))}
+                </Pie>
+                <Tooltip formatter={(v)=>currencyFormat(v)} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </section>
+
+
+      <section className="bg-white p-6 rounded-lg shadow">
+        <h3 className="font-medium mb-2">המלצות</h3>
+        <ul className="list-disc mr-6">
+          <li>חיסכון חודשי נדרש: {currencyFormat(requiredMonthlySaving)} למשך {monthsRemaining} חודשים.</li>
+          {currentMonthlySaving <= 0 && <li>כרגע אין חיסכון חודשי — כדאי לצמצם הוצאות או להעלות הכנסות / לדחות יעד.</li>}
+          {currentMonthlySaving > 0 && currentMonthlySaving < requiredMonthlySaving && <li>בקצב הנוכחי תגיע ליעד בעוד כ-{isFinite(etaMonths)?etaMonths:'∞'} חודשים — מאוחר מהיעד. שקול להגדיל חיסכון ב-{currencyFormat(requiredMonthlySaving-currentMonthlySaving)} לחודש.</li>}
+          {currentMonthlySaving >= requiredMonthlySaving && <li>אתה במסלול — מומלץ לשמור כרית ביטחון של 3–6 חודשי הוצאות לפני השקעות מסוכנות.</li>}
+        </ul>
+      </section>
+    </div>
+  )
+}
+```
+
+
+---
+
+
+## 11) אפשרויות מתקדמות (הנחיות יישום)
+- **ייצוא PDF חודשי:** השתמש בספרייה כמו `html2canvas` + `jsPDF` או בצד השרת ב־Puppeteer.
+- **חיבור לחשבונות בנק:** נעשה דרך API פיננסי (רב״ן/Truelayer/Bank APIs) — דורש הרשאות משתמש ואבטחה גבוהה.
+- **סנכרון ל-Google Sheets:** ניתן לייצא CSV או להשתמש ב־Google Apps Script (webhook) לקבלת POST עם תוכן ה־JSON.
+- **אחסון בענן:** השתמש ב־Firebase/Firestore עבור סינכרון בין מכשירים ומשתמשים.
+
+
+---
+
+
+## 12) איך להריץ מקומית
+1. התקן Node.js (גרסה 18+).
+2. העתק את הקבצים לספריה חדשה.
+3. הרץ `npm install`.
+4. הרץ `npm run dev` וגש ל־http://localhost:5173
+
+
+---
+
+
+אם תרצה, אני יכול עכשיו: 
+1. להמיר את כל הקבצים לקבצים ב־Canvas (כל קובץ בטקסטדוק נפרד).
+2. להכין קובץ `deploy` שמכין גרסה ל־Vercel/Netlify.
+3. להוסיף אימות משתמשים (Firebase Auth).
+4. להוסיף ייצוא ל־PDF אוטומטי.
+
+
+איזה מהצעדים האלו לעשות עכשיו — אעבור ישר ויעדכן את הקוד כאן בקנבס.
